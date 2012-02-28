@@ -7,16 +7,14 @@
 
    The algorithm function implements (using C-like pseudo code):
 
-	int i=0, j=0, max_sum=0;
-
 	if (!(size > 0)){
 		return NULL;
 	}
 
 	int *new_array = (int *) malloc((sizeof(int) * size) + 1);
 
-	for (i = 0; i < size; i++) {
-		for(j = 0; j <= i; j++) {
+	for (int i = 0; i < size; i++) {
+		for(int j = 0; j <= i; j++) {
 			new_array[i] += array[j];
 			if (array[i] > aarray[i-1]) {
 				max_sum = array[i];
@@ -40,9 +38,7 @@
 
 	* %i1: Input register used to sore size of input array (second param in scan)
 
-	* %g0: Global register often used to store variables on the current frame or
-
-	*      retrieve variables from the current frame.
+	* %g0: constant 0
 
 	* %g1: Global register used to store variables that will be compared or
 
@@ -53,9 +49,6 @@
 	* %o5: Output register used within the nested for loop.
 
 	* %o3: Output register also used in for loops.
-
-	* %o4: Output register also used in storing variables inside for loop.
-	
 */
 
 	.section	".text"
