@@ -101,28 +101,17 @@ inner_loop:
 	ld	[%fp-32], %g1       ! load address of new array to %g1
 	add	%o5, %g1, %o3       ! calculte the new_array[i] element address by add 
 	                        ! %o5 + %g1 and store to %o3
-	ld	[%fp-20], %g1       ! load value of i to %g1
-	sll	%g1, 2, %o5         ! multiply i by wordsize and store to %o5
-	ld	[%fp-32], %g1       ! load address of new array to %g1 
-	add	%o5, %g1, %o4       ! calculate the new_array[i] element address and store %o4
 	ld	[%fp-24], %g1       ! load value of j to %g1
 	sll	%g1, 2, %o5         ! multiply j by wordsize and store to %o5
 	ld	[%fp+68], %g1       ! load the address of the first param array to %g1 
 	add	%o5, %g1, %g1       ! calculate address of array[j] element 
-	ld	[%o4], %o5          ! load value at new_array[i] to %o5
+	ld	[%o3], %o5          ! load value at new_array[i] to %o5
 	ld	[%g1], %g1          ! load value at new_array[j] to %g1
 	add	%o5, %g1, %g1       ! add value of %o5 and %g1 to %g1
 	st	%g1, [%o3]          ! store the sum result back to new_array[i] memory location
 	                        ! that is : new_array[i] += array[j];
-	ld	[%fp-20], %g1       ! load value of i to %g1 
-	sll	%g1, 2, %o5         ! calculate the distance of new_array[i] from the beginning of array 
-	ld	[%fp+68], %g1       ! load the input array address to %g1
-	add	%o5, %g1, %o4       ! calculate the address of new_array[i] store to %o4
-	ld	[%fp-20], %g1       ! load value of i to %g1
-	sll	%g1, 2, %o5         ! calculate the distance of new_array[i] from the beginning of array 
-	ld	[%fp+68], %g1       ! load the input array address to %g1
-	add	%o5, %g1, %g1       ! calculate the address of new_array[i] store to %g1
-	ld	[%o4], %o5          ! load new_array[i] value to %o5
+	mov	%o3, %g1            ! move the address of new_array[i] to %g1
+	ld	[%o3], %o5          ! load new_array[i] value to %o5
 	ld	[%g1-4], %g1        ! load new_array[i - 1] value to %g1
 	cmp	%o5, %g1            ! compare new_array[i] and new_array[i - 1]
 	ble	inner_loop_inc      ! if new_array[i] <= new_array[i - 1] the branch at inner_loop_inc 
