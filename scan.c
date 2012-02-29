@@ -6,23 +6,24 @@
 
 int *scan(int *a, int n) {
 
-  int i=0, j=0, max=0;
+  int i,j,max_element = 0;
+  int *new_array;
 
-  if (!(n > 0)){
+  if (n > 0){
+    new_array = (int *) malloc((sizeof(int) * n) + 1);
+
+    for (i = 0; i < n; ++i) {
+      for(j = 0; j <= i; ++j) {
+        new_array[i] += a[j];
+      }
+      if (a[i] > a[i-1]) {
+        max_element = a[i];
+      }
+    }
+    new_array[n] = max_element;
+  }else{
     return NULL;
   }
 
-  int *new_array = (int *) malloc((sizeof(int) * n) + 1);
-
-  for (i = 0; i < n; ++i) {
-    for(j = 0; j <= i; ++j) {
-      new_array[i] += a[j];
-      if (a[i] > a[i-1]) {
-        max = a[i];
-      }
-    }
-  }
-
-  new_array[n] = max;
   return new_array;
 }

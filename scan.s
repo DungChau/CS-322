@@ -7,22 +7,25 @@
 
    The algorithm function implements (using C-like pseudo code):
 
-	if (!(size > 0)){
+   	int *new_array;
+
+	if (size > 0){
+
+		new_array = (int *) malloc((sizeof(int) * size) + 1);
+
+		for (int i = 0; i < size; i++) {
+			for(int j = 0; j <= i; j++) {
+				new_array[i] += array[j];
+			}
+			if (array[i] > array[i-1]) {
+				max_element = array[i];
+			}
+		}
+	}else{
 		return NULL;
 	}
 
-	int *new_array = (int *) malloc((sizeof(int) * size) + 1);
-
-	for (int i = 0; i < size; i++) {
-		for(int j = 0; j <= i; j++) {
-			new_array[i] += array[j];
-			if (array[i] > aarray[i-1]) {
-				max_sum = array[i];
-			}
-		}
-	}
-
-	new_array[size] = max_sum;
+	new_array[size] = max_element;
 	return new_array;
 
 
@@ -30,25 +33,23 @@
 
 	* %sp: stack pointer,top of stack.
 
-	* %fp: Frame pointer.
+	* %fp: frame pointer.
 
-	* %i0: Input register used to store the pointer to the original array 
+	* %i0: register used to store the pointer to the input array
 		
-	*		(first parameter in scan)
-
-	* %i1: Input register used to sore size of input array (second param in scan)
+	* %i1: register used to sore size of input array (second param in scan)
 
 	* %g0: constant 0
 
-	* %g1: Global register used to store variables that will be compared or
+	* %g1: Global register used to store variables that will be computed
 
-	*      added or shifted.
+	*      for example: compared or added or shifted.
 
-	* %o0: Output register used to store temporary values in comparisons
+	* %o0: register used to store the address of new array in malloc call.
 
-	* %o5: Output register used within the nested for loop.
+	* %o5: register used within the inner for loop.
 
-	* %o3: Output register also used in for loops.
+	* %o3: register also used in for loops.
 */
 
 	.section	".text"
@@ -60,11 +61,11 @@ scan:
 	st	%i0, [%fp+68]		! store the first param (the input array) to location fp + 68
 	st	%i1, [%fp+72]		! store the second param (size) to location fp + 72
 	st	%g0, [%fp-20]		! store constant 0 to location fp - 20 -- i = 0
-	st	%g0, [%fp-28]		! store constant 0 to location fp - 28 -- max_sum = 0
+	st	%g0, [%fp-28]		! store constant 0 to location fp - 28 -- max_element = 0
 	ld	[%fp+72], %g1		! store size of the array to %g1
 	cmp	%g1, 0              ! compare if (size <= 0)
 	bg	new_array           ! if size > 0 branch at new_array 
-	nop                     ! do nothing delay
+	nop                     ! delay slot
 	st	%g0, [%fp-36]		! store constant 0 to fp - 36 which is NULL
 	b	end_routine			! branch at end_routine
 	 nop                    ! delay slot
@@ -114,7 +115,7 @@ inner_loop:
 	ld	[%fp+68], %g1       ! load the input array address to %g1
 	add	%o5, %g1, %g1       ! calculate the address of new_array[i] store to %g1
 	ld	[%g1], %g1          ! load the value at new_array[i] to %g1
-	st	%g1, [%fp-28]       ! store that value to max_sum 
+	st	%g1, [%fp-28]       ! store that value to max_element 
 inner_loop_inc:
 	ld	[%fp-24], %g1       ! load value of j to %g1
 	add	%g1, 1, %g1         ! increment j++
@@ -132,8 +133,8 @@ last_element:
 	sll	%g1, 2, %o5         ! calculate the distance from the beginning to new_array[size] 
 	ld	[%fp-32], %g1       ! load address of new_array to %g1
 	add	%o5, %g1, %o5       ! compute the address of new_array[size] and store in %o5	
-	ld	[%fp-28], %g1       ! load value of max_sum to %g1 
-	st	%g1, [%o5]          ! new_array[size] = max_sum
+	ld	[%fp-28], %g1       ! load value of max_element to %g1 
+	st	%g1, [%o5]          ! new_array[size] = max_element
 	ld	[%fp-32], %g1       ! load address of new array to %g1  
 	st	%g1, [%fp-36]       ! store that address to fp - 36
 end_routine:
